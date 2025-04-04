@@ -51,9 +51,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tabBar: {
-    backgroundColor:GlobalStyles.colors.plum,
+    backgroundColor:GlobalStyles.colors.charcoal,
     borderTopWidth: 2,
-    borderTopColor: GlobalStyles.colors.charcoal,
+    borderTopColor: GlobalStyles.colors.amethyst,
     height: 60,
     paddingBottom: 10,
   },
