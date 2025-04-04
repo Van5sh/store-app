@@ -49,7 +49,7 @@ function shopReducer(state: ShopState, action: ReducerAction): ShopState {
       const existingItemIndex = state.cart.findIndex((item) => item.id === action.payload.id);
       if (existingItemIndex >= 0) {
         const updatedCart = [...state.cart];
-        updatedCart[existingItemIndex].quantity += 1; // Increment quantity
+        updatedCart[existingItemIndex].quantity += 1;
         return { ...state, cart: updatedCart };
       } else {
         return {
@@ -64,9 +64,9 @@ function shopReducer(state: ShopState, action: ReducerAction): ShopState {
       if (existingItemIndex >= 0) {
         const updatedCart = [...state.cart];
         if (updatedCart[existingItemIndex].quantity > 1) {
-          updatedCart[existingItemIndex].quantity -= 1; // Decrement quantity
+          updatedCart[existingItemIndex].quantity -= 1;
         } else {
-          updatedCart.splice(existingItemIndex, 1); // Remove item if quantity is 1
+          updatedCart.splice(existingItemIndex, 1);
         }
         return { ...state, cart: updatedCart };
       }
