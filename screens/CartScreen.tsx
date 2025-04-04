@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, FlatList } from 'react-native';
 import { CartContext } from '../contexts/ShopContext';
 import { GlobalStyles } from '../constants/colors';
@@ -6,10 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function CartScreen() {
   const { cartItems, deleteItem } = useContext(CartContext);
-
-  // Calculate the total price of all items in the cart
   const finalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
   const renderItem = ({ item }) => (
     <View style={styles.itemStyle}>
       <View style={styles.containerone}>

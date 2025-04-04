@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react';
-import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, Image,TextInput, FlatList, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { CartContext } from '../contexts/ShopContext';
 import { GlobalStyles } from '../constants/colors';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,14 +8,36 @@ import { Ionicons } from '@expo/vector-icons';
 export default function ShopScreen() {
   const { products, addItem } = useContext(CartContext);
   const [expandedItemId, setExpandedItemId] = useState<Number | null>(null);
+  const [searchQuery,setSearchQuery] = useState<string>("");
+  const [filteredProducts,setFilteredProducts] = useState(products);
+
+  useEffect(()=>{
+    setFilteredProducts(products);
+  },[products]);
+
+  const handleSearch=(searchQuery:string)=>{
+    setSearchQuery(searchQuery);
+    const formattedQuery=searchQuery.toLowerCase();
+    const filteredProducts=products.filter((product)=>
+      product.title.toLowerCase().includes(formattedQuery)
+    );
+    setFilteredProducts(filteredProducts);
+  }
 
   const toggleDescription = (itemId:Number) => {
     setExpandedItemId((prevId) => (prevId === itemId ? null : itemId));
   };
   return (
     <View style={styles.container}>
+      <TextInput 
+        placeholder='search'
+        autoCorrect={false}
+        onChangeText={handleSearch}
+        placeholderTextColor="black"
+        value={searchQuery}
+        style={styles.search}/>
       <FlatList
-        data={products}
+        data={filteredProducts}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.itemStyle}>
@@ -52,6 +74,16 @@ export default function ShopScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  search:{
+    borderColor:GlobalStyles.colors.grape,
+    borderWidth: 2,
+    borderRadius: 5,
+    margin: 4,
+    paddingHorizontal:15,
+    paddingVertical: 10,
+    color: "black",
+    fontSize: 20,
   },
   buttonContainer: {
     flexDirection: "column",
