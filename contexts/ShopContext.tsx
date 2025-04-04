@@ -1,63 +1,88 @@
-import { createContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useReducer, useEffect, ReactNode } from 'react';
+import { fetchFakeStoreProducts } from '../constants/items';
 
-const DUMMY_CART_ITEMS = [
-  { id: 'c1', title: 'Item 1', price: 29.99 },
-  { id: 'c2', title: 'Item 2', price: 49.99 },
-];
-
-interface CartItem {
-  id: string;
+interface Product {
+  id: number;
   title: string;
   price: number;
+  image: string;
+  description: string;
+}
+
+interface CartItem extends Product {}
+
+interface ShopState {
+  products: Product[];
+  cart: CartItem[];
 }
 
 type ReducerAction =
-  | { type: 'ADD'; payload: Omit<CartItem, 'id'> }
-  | { type: 'DELETE'; payload: string };
+  | { type: 'SET_PRODUCTS'; payload: Product[] }
+  | { type: 'ADD'; payload: Product }
+  | { type: 'DELETE'; payload: number };
+
+const initialState: ShopState = {
+  products: [],
+  cart: [],
+};
 
 export const CartContext = createContext<{
+  products: Product[];
   cartItems: CartItem[];
-  addItem: (itemData: Omit<CartItem, 'id'>) => void;
-  deleteItem: (id: string) => void;
+  addItem: (item: Product) => void;
+  deleteItem: (id: number) => void;
 }>({
+  products: [],
   cartItems: [],
   addItem: () => {},
   deleteItem: () => {},
 });
 
-function cartReducer(state: CartItem[], action: ReducerAction): CartItem[] {
+function shopReducer(state: ShopState, action: ReducerAction): ShopState {
   switch (action.type) {
+    case 'SET_PRODUCTS':
+      return { ...state, products: action.payload };
+
     case 'ADD':
-      const newItem: CartItem = {
-        id: new Date().toISOString() + Math.random().toString(),
-        ...action.payload,
-      };
-      return [newItem, ...state];
+      return { ...state, cart: [...state.cart, action.payload] };
+
     case 'DELETE':
-      return state.filter((item) => item.id !== action.payload);
+      return { ...state, cart: state.cart.filter((item) => item.id !== action.payload) };
+
     default:
       return state;
   }
 }
 
-function CartContextProvider({ children }: { children: ReactNode }) {
-  const [cartState, dispatch] = useReducer(cartReducer, DUMMY_CART_ITEMS);
+export default function CartContextProvider({ children }: { children: ReactNode }) {
+  const [shopState, dispatch] = useReducer(shopReducer, initialState);
 
-  const addItem = (itemData: Omit<CartItem, 'id'>) => {
-    dispatch({ type: 'ADD', payload: itemData });
+  useEffect(() => {
+    async function loadProducts() {
+      const products = await fetchFakeStoreProducts();
+      dispatch({ type: 'SET_PRODUCTS', payload: products });
+    }
+    loadProducts();
+  }, []);
+
+  const addItem = (item: Product) => {
+    dispatch({ type: 'ADD', payload: item });
   };
 
-  const deleteItem = (id: string) => {
+  const deleteItem = (id: number) => {
     dispatch({ type: 'DELETE', payload: id });
   };
 
-  const contextValue = {
-    cartItems: cartState,
-    addItem,
-    deleteItem,
-  };
-
-  return <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>;
+  return (
+    <CartContext.Provider
+      value={{
+        products: shopState.products,
+        cartItems: shopState.cart,
+        addItem,
+        deleteItem,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 }
-
-export default CartContextProvider;

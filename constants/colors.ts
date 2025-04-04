@@ -1,16 +1,16 @@
 export const GlobalStyles = {
-    colors: {
-      primary50: '#e4d9fd',
-      primary100: '#c6affc',
-      primary200: '#a281f0',
-      primary400: '#5721d4',
-      primary500: '#3e04c3',
-      primary700: '#2d0689',
-      primary800: '#200364',
-      accent500: '#f7bc0c',
-      error50: '#fcc4e4',
-      error500: '#9b095c',
-      gray500: '#39324a',
-      gray700: '#221c30',
-    },
-  };
+  colors: {
+    lilac: '#e4d9fd',
+    lavender: '#c6affc',
+    amethyst: '#a281f0',
+    grape: '#5721d4',
+    plum: '#3e04c3',
+    eggplant: '#2d0689',
+    midnight: '#200364',
+    gold: '#f7bc0c',
+    pink: '#fcc4e4',
+    magenta: '#9b095c',
+    slate: '#39324a',
+    charcoal: '#221c30',
+  },
+};
